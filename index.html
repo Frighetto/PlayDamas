@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Play Damas</title>
+        <meta charset="utf-8">        
+        <meta name="viewport" content="width=device-width, initial-scale=1">                                   
+        <meta name="author" content="Lucas Fernando Frighetto">
+        <link rel="icon" href="3828884_boardgames_crown_draughts_games_monopoly_icon.ico">                    
+        <link href="bootstrap/bootstrap.css" rel="stylesheet">            
+        <link href="index.css" rel="stylesheet">                                           
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div id="navbar" class="navbar-collapse collapse">
+                    <div class="navbar-form navbar-right form-group">
+                        <form action="/singin.php" method="POST" onsubmit="this.source.value=this.outerHTML"> 
+                            <input id="id" name="id" type="text" placeholder="Usuário" class="form-control" maxlength="15">
+                            <input id="pass" name="pass" type="password" placeholder="Senha" class="form-control" maxlength="15">
+                            <button type="submit" class="btn btn-success">Entrar</button>
+                        </form> 
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="jumbotron">
+            <div class="ljumbotron">
+                <div class="container">  
+                    <h1>Bem vindo!</h1>
+                    <br>
+                    <p>
+                        <a class="btn btn-primary btn-lg" href="visit.php" >Jogar agora &raquo;</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="form-signin">
+                <form action="/singup.php" method="POST" onsubmit="this.source.value=this.outerHTML">          
+                    <label for="inputEmail" class="sr-only">Usuário</label>
+                    <input name="new_account" type="text" class="form-control" placeholder="Usuário" maxlength="15" required autofocus>
+                    <label for="inputPassword" class="sr-only">Senha</label>
+                    <input name="new_pass" type="password" class="form-control" placeholder="Senha" maxlength="15" required>
+                    <label for="inputPassword" class="sr-only">Repita a senha</label>
+                    <input name="confirm_pass" type="password" class="form-control" placeholder="Repita a senha" maxlength="15" required>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Criar conta</button>
+                </form>                                   
+            </div>
+        </div>
+    </body>
+</html>
