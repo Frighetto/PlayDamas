@@ -1,0 +1,22 @@
+body {  
+    background-color: #eee;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+    
+th {
+    background: #eee;
+}
+    
+.tableFixHead {
+    overflow-y: auto;
+    height: 400px;
+}
+
+.tableFixHead thead th {
+    position: sticky;
+    top: 0;
+}
