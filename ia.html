@@ -100,36 +100,113 @@
                     newboardgame += updates[i] != null ? updates[i] : boardgame[i];
                 }               
                 return newboardgame;
-            }           
+            }      
+            
+            function removeFromArray(indexToRemove, nodeInSearch){               
+                for(var i = indexToRemove; i < nodeInSearch.nextBoardgames.length - 1; i++){
+                    nodeInSearch.nextBoardgames[i] = nodeInSearch.nextBoardgames[(i + 1)];
+                }
+                nodeInSearch.nextBoardgames.pop();                
+            }
 
-            var currentBoardgame = "11111111111100000000222222222222";
+            var currentBoardgame = null;
             var redTurnBoardgamesInSearch = [];
             var whiteTurnBoardgamesInSearch = [];                    
             var gameboardTreeNode = { 
-                boardgame: currentBoardgame,
-                isRedTurn: true,
-                nextBoardgames: []
+                boardgame: null,
+                isRedTurn: null,
+                nextBoardgames: ["11111111111100000000222222222222"]
             };
             var searchStack = [{currentBoardgame: gameboardTreeNode}];                                        
             var jumps = [];
             var simpleMoves = [];   
-                        
-            generateGameState(gameboardTreeNode);
-                        
-            jumps = [];
-            simpleMoves = []; 
-            gameboardTreeNode = {
-                boardgame: null,
-                isRedTurn: null,
-                nextBoardgames: []
-            };
+            var currentNodeInSearch;
+            var nextNodeIndex;  
+            var cont = 0;
+            do{
 
-            //on next game veify if there is already a tree node listed in boardgames
             
+            do {               
+                currentNodeInSearch = searchStack[searchStack.length - 1].currentBoardgame;               
+                nextNodeIndex = null;   
+                for(var i = currentNodeInSearch.nextBoardgames.length - 1; i >= 0; i--){
+                    var anNextGame = currentNodeInSearch.nextBoardgames[i];
+                    if(typeof anNextGame == "string"){       
+                        var isRedTurn = searchStack.length % 2 == 0;       
+                        var gamesInSearch = isRedTurn ? redTurnBoardgamesInSearch : whiteTurnBoardgamesInSearch;                    
+                        if(gamesInSearch.includes(anNextGame)){                        
+                            removeFromArray(i, currentNodeInSearch);                        
+                        } else {
+                            nextNodeIndex = i;
+                            break;
+                        }
+                    }
+                } 
+                if(nextNodeIndex != null){
+                    currentBoardgame = currentNodeInSearch.nextBoardgames[nextNodeIndex];                    
+                    gameboardTreeNode = {
+                        boardgame: currentBoardgame,
+                        isRedTurn: turnOfNextBoardGame(currentNodeInSearch),
+                        nextBoardgames: []
+                    };
+                    
+                    currentNodeInSearch.nextBoardgames[nextNodeIndex] = gameboardTreeNode;
+                    
+                    searchStack.push({currentBoardgame: gameboardTreeNode});
+                    cont++;  
+                    if(cont % 1000 == 0){
+                        console.log(cont);
+                    }
+                    
+                    jumps = [];
+                    simpleMoves = []; 
+                    generateGameState(gameboardTreeNode); 
+                } 
+               
+            } while(nextNodeIndex != null);   
+                        
+            if(gameboardTreeNode.nextBoardgames.length == 0){
+                searchStack.pop();
+                if(searchStack.length > 0){
+                    var tempGameBoardTreeNode = searchStack[searchStack.length - 1];
+                    if(gameboardTreeNode.isRedTurn){
+                        var tempNextBoardGames = tempGameBoardTreeNode.currentBoardgame.nextBoardgames;
+                        for(var i = tempNextBoardGames.length - 1; i >= 0; i--){
+                            if(typeof tempNextBoardGames[i] != "string"){
+                                if(tempNextBoardGames[i].boardgame == gameboardTreeNode.boardgame){                                   
+                                    removeFromArray(i, tempGameBoardTreeNode.currentBoardgame);     
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if(cont > 5000){
+                   break;
+               }
+            } while (searchStack.length > 1);
             console.log(redTurnBoardgamesInSearch);
             console.log(whiteTurnBoardgamesInSearch);
-            console.log(searchStack);
+            console.log('s', searchStack);
             console.log(gameboardTreeNode);
+
+            function turnOfNextBoardGame(gameboardTreeNode){
+                jumps = [];
+                var boardgame = gameboardTreeNode.boardgame;  
+                var isRedTurn = gameboardTreeNode.isRedTurn;   
+                if(isRedTurn == null){
+                    return true;
+                } 
+                for(var i = 0 ; i < 32 ; i++){
+                    if(isRedTurn){
+                        verifyRedTurn(boardgame, moves[i], i);
+                    } else {
+                        verifyWhiteTurn(boardgame, moves[i], i);
+                    }
+                }
+                return jumps.length > 0 ? isRedTurn : !isRedTurn;
+            }
             
             function generateGameState(gameboardTreeNode) { 
                 var boardgame = gameboardTreeNode.boardgame;   
@@ -184,16 +261,16 @@
                 }
             }
 
-            function verifyWhiteTurn(boardgame, move, position){
-                var pos = boardgame[position];
-                for(var i = move.length - 1; i >= 0; i--){
+            function verifyWhiteTurn(boardgame, moves, position){               
+                var pos = boardgame[position];                
+                for(var i = moves.length - 1; i >= 0; i--){
                     var move = moves[i];
                     var isBlank = pos == '0';
                     var isPiece = pos == '2';
                     var isKing = pos == '4';
                 
-                    if(!isBlank){
-                        if(move.length > 1){    
+                    if(!isBlank){                          
+                        if(move.length > 1){                             
                             var isJumpToBlank = boardgame[move[1]] == '0';
                             var isNextRed = boardgame[move[0]] == '1' ||  boardgame[move[0]] == '3';
                             if(isJumpToBlank && isNextRed){
@@ -205,15 +282,13 @@
                             break;
                         } else {
                             var isMoveToBlank = boardgame[move[0]] == '0';
-                            if(isMoveToBlank && (isPiece && position > move[0]) || isKing){               
+                            if(isMoveToBlank && (isPiece && position > move[0]) || isKing){                                           
                                 simpleMoves.push(generateNextBoardGame(boardgame, position, move));
                             }
                         }
                     }
                 }
-            }
-
-           
+            }           
                       
         </script>                                       
     </head>
