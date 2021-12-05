@@ -109,6 +109,62 @@
                 nodeInSearch.nextBoardgames.pop();                
             }
 
+            function compare(a, b){
+                if(a[0] < b[0]){
+                    return -1;
+                } else if(a[0] > b[0]){
+                    return 1;
+                } else  if(a[1] < b[1]){
+                    return -1;
+                } else if(a[1] > b[1]){
+                    return 1;
+                } else if(a[2] < b[2]){
+                    return -1;
+                } else if(a[2] > b[2]){
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+
+            function addInSearch(node, value, deep){
+                
+                if(node.value == null){
+                    node.value = value;
+                } else {
+                    if(compare(value, node.value) < 0){
+                       return addInSearch(node.previous, value, deep + 1);
+                    } else if(compare(value, node.value) > 0){
+                        return addInSearch(node.next, value, deep + 1);
+                    }
+                }
+            }
+
+            function newNode(value){
+                return {
+                    value: value,
+                    previousDeepness: 0,
+                    nextDeepness: 0,
+                    previous: null,
+                    next: null
+                }
+            }         
+            
+            var player1 = newNode(null);
+
+            function base5ToDecimal(string){
+                var decimal = BigInt("0");
+                for(var i = string.length - 1; i >= 0; i--){
+                    if(string[i] != "0"){
+
+                    }
+                   
+                }
+                
+               console.log(BigInt(string) + 1n);
+            }
+            console.log(3n**2n); //3²
+            base5ToDecimal("11111111111100000000222222222222");
             var currentBoardgame = null;
             var redTurnBoardgamesInSearch = [];
             var whiteTurnBoardgamesInSearch = [];                    
@@ -123,6 +179,7 @@
             var currentNodeInSearch;
             var nextNodeIndex;  
             var cont = 0;
+            /*
             do{
 
             
@@ -190,7 +247,7 @@
             console.log(whiteTurnBoardgamesInSearch);
             console.log('s', searchStack);
             console.log(gameboardTreeNode);
-
+*/
             function turnOfNextBoardGame(gameboardTreeNode){
                 jumps = [];
                 var boardgame = gameboardTreeNode.boardgame;  
