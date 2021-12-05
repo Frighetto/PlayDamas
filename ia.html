@@ -179,7 +179,7 @@
             var currentNodeInSearch;
             var nextNodeIndex;  
             var cont = 0;
-            /*
+            /* Código muito monolítico, refazer baseado em diagrama de alto nível
             do{
 
             
@@ -188,8 +188,9 @@
                 nextNodeIndex = null;   
                 for(var i = currentNodeInSearch.nextBoardgames.length - 1; i >= 0; i--){
                     var anNextGame = currentNodeInSearch.nextBoardgames[i];
-                    if(typeof anNextGame == "string"){       
-                        var isRedTurn = searchStack.length % 2 == 0;       
+                    if(typeof anNextGame == "string"){     
+                        var previousNodeInSeach = searchStack.length > 1 ? searchStack[searchStack.length - 2].currentBoardgame : {isRedTurn: null};
+                        var isRedTurn = turnOfNextBoardGame(previousNodeInSeach); //não testado
                         var gamesInSearch = isRedTurn ? redTurnBoardgamesInSearch : whiteTurnBoardgamesInSearch;                    
                         if(gamesInSearch.includes(anNextGame)){                        
                             removeFromArray(i, currentNodeInSearch);                        
@@ -239,7 +240,7 @@
                     }
                 }
             }
-            if(cont > 5000){
+            if(cont > 5000){ //limite para testar apenas os primeiros casos.
                    break;
                }
             } while (searchStack.length > 1);
